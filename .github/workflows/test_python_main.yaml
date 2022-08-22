@@ -1,0 +1,9 @@
+name: Test Python-Main flow
+
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: trisnol/workflows/python-main@main

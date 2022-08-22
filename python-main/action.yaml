@@ -1,0 +1,59 @@
+name: "Main Python"
+description: "Lint, test and scan Python"
+inputs:
+  version:
+    required: false
+    description: "The Python version to use in the Action - defaults to 3.10"
+    default: '3.10'
+  min_test_coverage:
+    required: false
+    description: "Minimal test coverage in % required to successfully pass the pipeine."
+    default: '0.6'  
+runs:
+  using: "composite"
+  steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Python setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.version }}
+
+      - name: Install project dependencies
+        shell: bash
+        run: pip install -r requirements.txt
+
+      - name: Install testing/linting dependencies
+        shell: bash
+        run: pip install bandit flake8 pytest pyupgrade safety coverage
+
+      - name: Scan for security issues with Bandit
+        shell: bash
+        run: bandit --recursive --skip B101 . # B101 is assert statements
+
+      - name: Lint with Flake8
+        shell: bash
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --show-source --statistics
+      - name: Run Safety check
+        shell: bash
+        run: safety check --full-report --ignore=44715 --output safety-check.txt || true
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: safety-check-results
+          path: safety-check.txt
+
+      - name: Determine test coverage
+        shell: bash
+        run: |
+          coverage run -m pytest .
+          coverage report -m --fail-under=${{ inputs.min_test_coverage }}
+          coverage html
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage-results
+          path: htmlcov/
