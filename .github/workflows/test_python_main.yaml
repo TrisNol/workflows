@@ -6,4 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Call composite workflow 
         uses: trisnol/workflows/python-main@main
