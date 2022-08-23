@@ -9,5 +9,3 @@ Each action is placed in a separate folder and can be caled as follows:
 ```
 
 Replace `<action>` with the folder's name hosting the action (e.g., python-main to call the Python based action). The string behind the `@` specifies the branch or release to reference.
-
-
