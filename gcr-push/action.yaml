@@ -1,0 +1,38 @@
+name: "GCR Push"
+description: "Build Docker image and push it to the Google Container Registry"
+inputs:
+  service_account_key:
+    required: true
+    description: "GCP service account credentials used to log in to GCP."
+  project_id:
+    required: true
+    description: "GCP project id to push the image to."
+  image_name:
+    required: true
+    description: "Name of the image to push."
+  image_version:
+    required: false
+    description: "Version to tag the image with. Defaults to latest"
+    default: "latest"  
+runs:
+  using: "composite"
+  steps:
+    - name: GCP Login
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ inputs.service_account_key }}'
+
+    - name: Cloud SDK setup
+      uses: 'google-github-actions/setup-gcloud@v0'
+
+    - name: GCR login
+      run: |
+        gcloud auth configure-docker -q
+
+    - name: Docker build
+      run: |
+        docker build -t gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }} .
+
+    - name: Docker push
+      run: |
+        docker push gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }}
