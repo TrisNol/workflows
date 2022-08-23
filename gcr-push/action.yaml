@@ -26,13 +26,16 @@ runs:
       uses: 'google-github-actions/setup-gcloud@v0'
 
     - name: GCR login
+      shell: bash
       run: |
         gcloud auth configure-docker -q
 
     - name: Docker build
+      shell: bash
       run: |
         docker build -t gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }} .
 
     - name: Docker push
+      shell: bash
       run: |
         docker push gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }}
