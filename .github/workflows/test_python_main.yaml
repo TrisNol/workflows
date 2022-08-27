@@ -1,0 +1,15 @@
+name: Test Python-Main flow
+
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create temporary requirements.txt
+        run: touch requirements.txt
+
+      # - name: Call composite workflow 
+      #   uses: trisnol/workflows/python-main@feat/init
