@@ -1,41 +1,29 @@
-name: "GCR Push"
-description: "Build Docker image and push it to the Google Container Registry"
+name: "Main Angular"
+description: "Run linting, unit testing and Docker build on an Angular application"
 inputs:
-  service_account_key:
-    required: true
-    description: "GCP service account credentials used to log in to GCP."
-  project_id:
-    required: true
-    description: "GCP project id to push the image to."
-  image_name:
-    required: true
-    description: "Name of the image to push."
-  image_version:
+  node_version:
     required: false
-    description: "Version to tag the image with. Defaults to latest"
-    default: "latest"
+    description: "Version of Node.Js to be used. Defaults to 16"
+    default: "16"
 runs:
   using: "composite"
   steps:
-    - name: GCP Login
-      uses: "google-github-actions/auth@v0"
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
       with:
-        credentials_json: "${{ inputs.service_account_key }}"
+        node-version: ${{ inputs.node_version }}
 
-    - name: Cloud SDK setup
-      uses: "google-github-actions/setup-gcloud@v0"
-
-    - name: GCR login
+    - name: Install dependencies
       shell: bash
       run: |
-        gcloud auth configure-docker -q
+        npm install
+
+    - name: Lint code
+      shell: bash
+      run: |
+        npm run lint
 
     - name: Docker build
       shell: bash
       run: |
-        docker build -t gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }} .
-
-    - name: Docker push
-      shell: bash
-      run: |
-        docker push gcr.io/${{ inputs.project_id }}/${{ inputs.image_name }}:${{ inputs.image_version }}
+        docker build -t "temp:latest" .
