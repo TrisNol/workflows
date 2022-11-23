@@ -18,21 +18,20 @@ runs:
       with:
         node-version: ${{ inputs.node_version }}
 
-    - name: Change to project directory
-      shell: bash
-      run: | 
-        cd ${{ inputs.path }}
     - name: Install dependencies
       shell: bash
       run: |
         npm install
+      working-directory: ${{ inputs.path }}
 
     - name: Lint code
       shell: bash
       run: |
         npm run lint
+      working-directory: ${{ inputs.path }}
 
     - name: Docker build
       shell: bash
       run: |
         docker build -t "temp:latest" .
+      working-directory: ${{ inputs.path }}
