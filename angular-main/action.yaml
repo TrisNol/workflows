@@ -24,12 +24,6 @@ runs:
         npm install
       working-directory: ${{ inputs.path }}
 
-    - name: Lint code
-      shell: bash
-      run: |
-        npm run lint
-      working-directory: ${{ inputs.path }}
-
     - name: Docker build
       shell: bash
       run: |
