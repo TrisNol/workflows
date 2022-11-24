@@ -1,0 +1,31 @@
+name: "Main Angular"
+description: "Run linting, unit testing and Docker build on an Angular application"
+inputs:
+  node_version:
+    required: false
+    description: "Version of Node.Js to be used. Defaults to 16"
+    default: "16"
+  path:
+    required: false
+    description: "Path to the Angular project inside the repo"
+    default: "./"
+runs:
+  using: "composite"
+  
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        npm install
+      working-directory: ${{ inputs.path }}
+
+    - name: Docker build
+      shell: bash
+      run: |
+        docker build -t "temp:latest" .
+      working-directory: ${{ inputs.path }}
