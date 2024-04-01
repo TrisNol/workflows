@@ -16,7 +16,7 @@ This action is a simple wrapper for Angular related CI actions
       - name: Call composite workflow 
         uses: trisnol/workflows/angular-main@main
         with: 
-          node_version: 16
+          node_version: 20
           path: ./frontend
 ```
 
