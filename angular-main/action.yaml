@@ -3,8 +3,8 @@ description: "Run linting, unit testing and Docker build on an Angular applicati
 inputs:
   node_version:
     required: false
-    description: "Version of Node.Js to be used. Defaults to 16"
-    default: "16"
+    description: "Version of Node.Js to be used. Defaults to 20"
+    default: "20"
   path:
     required: false
     description: "Path to the Angular project inside the repo"
@@ -18,13 +18,19 @@ runs:
       with:
         node-version: ${{ inputs.node_version }}
 
-    - name: Install dependencies
+    - name: Install dependencies 📦️
       shell: bash
       run: |
-        npm install
+        npm ci
       working-directory: ${{ inputs.path }}
 
-    - name: Docker build
+    - name: Build 🛠️
+      shell: bash
+      run: |
+        npm run build --prod
+      working-directory: ${{ inputs.path }}
+
+    - name: Docker build 🐳
       shell: bash
       run: |
         docker build -t "temp:latest" .
