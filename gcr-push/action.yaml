@@ -34,7 +34,7 @@ runs:
     - name: GCR login
       shell: bash
       run: |
-        gcloud auth configure-docker -q
+        gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev -q
 
     - name: Extract metadata (tags, labels) for Docker 💽 
       id: meta
@@ -43,7 +43,7 @@ runs:
         images: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project_id }}/${{ inputs.repository }}/${{ inputs.image_name }}
         tags: |
           type=raw,value=latest
-          type=raw,value=${{ env.tag }}
+          type=raw,value=${{ inputs.image_version }}
 
     - name: Build and push 🐳
       uses: docker/build-push-action@v5
